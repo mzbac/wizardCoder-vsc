@@ -24,7 +24,7 @@ This extension contributes the following configuration settings:
 You can access the extension's commands by:
 
 - Right-clicking in the editor and selecting the `Chat with Wizard Coder` command from the context menu.
-- Using the default keybinding for the "toggle wizardCoder activation" command: Shift+Ctrl+' (Windows/Linux) or Shift+Cmd+' (Mac).
+- Using the copilot's inline completion the "toggle wizardCoder activation" command: Shift+Ctrl+' (Windows/Linux) or Shift+Cmd+' (Mac).
 
 
 
