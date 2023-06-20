@@ -10,3 +10,21 @@ a Visual Studio Code extension, developed as a proof of concept (POC) to demonst
 ## Backend API
 
 Please check out the backend API repository here. https://github.com/mzbac/AutoGPTQ-API
+
+## Extension Settings
+This extension contributes the following configuration settings:
+
+```
+{
+    "wizardCoder.apiEndpoint": "your wizardcoder api endpoint"
+}
+
+```
+## Usage
+You can access the extension's commands by:
+
+- Right-clicking in the editor and selecting the `Chat with Wizard Coder` command from the context menu.
+- Using the default keybinding for the "toggle wizardCoder activation" command: Shift+Ctrl+' (Windows/Linux) or Shift+Cmd+' (Mac).
+
+
+
