@@ -1,21 +1,25 @@
 import * as vscode from 'vscode';
 import { WizardCoderInlineCompletionItemProvider } from './WizardCoderInlineCompletionItemProvider';
+import { chatToWizardCoder } from './chatWithWizardCoder';
+import { ViewProvider } from './webviews/viewProvider';
+
+let chatToWizardCoderDisposable: vscode.Disposable | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
 	let providerDisposable: vscode.Disposable | undefined;
 
 	// Status bar item creation
 	let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	statusBarItem.command = 'wizardCoder.toggleActivate';
+	statusBarItem.command = 'wizardCoder-vsc.toggleActivate';
 	statusBarItem.show();
 	context.subscriptions.push(statusBarItem);
 
 	// Command registration
-	let disposable = vscode.commands.registerCommand('wizardCoder.toggleActivate', function () {
-		let activated = context.globalState.get('activated') || false;
+	let disposable = vscode.commands.registerCommand('wizardCoder-vsc.toggleActivate', function () {
+		let activated = context.globalState.get('wizardCoder-vsc-activated') || false;
 		activated = !activated; // toggle the activation state
 
-		context.globalState.update('activated', activated);
+		context.globalState.update('wizardCoder-vsc-activated', activated);
 
 		if (activated) {
 			const provider = new WizardCoderInlineCompletionItemProvider();
@@ -40,11 +44,33 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 
 	// Automatically activate the extension if it was previously activated
-	if (context.globalState.get('activated')) {
-		vscode.commands.executeCommand('wizardCoder.toggleActivate');
+	if (context.globalState.get('wizardCoder-vsc-activated')) {
+		vscode.commands.executeCommand('wizardCoder-vsc.toggleActivate');
 	} else {
 		statusBarItem.text = 'WizardCoder: OFF';
 	}
+
+	const viewProvider = new ViewProvider(context);
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(
+			"wizardCoder-vsc.view",
+			viewProvider,
+			{
+				webviewOptions: { retainContextWhenHidden: true },
+			}
+		)
+	);
+
+	chatToWizardCoderDisposable = vscode.commands.registerCommand(
+		"wizardCoder-vsc.chat",
+		chatToWizardCoder(viewProvider)
+	);
+
+	context.subscriptions.push(chatToWizardCoderDisposable);
 }
 
-export function deactivate() { }
+export function deactivate() {
+	if (chatToWizardCoderDisposable) {
+		chatToWizardCoderDisposable.dispose();
+	}
+}

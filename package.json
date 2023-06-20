@@ -14,12 +14,43 @@
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "wizardCoder-vsc",
+          "title": "Wizard Coder ",
+          "icon": "$(comment-discussion)"
+        }
+      ]
+    },
+    "views": {
+      "wizardCoder-vsc": [
+        {
+          "type": "webview",
+          "id": "wizardCoder-vsc.view",
+          "name": "Chat with Wizard Coder"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "wizardCoder.toggleActivate",
+        "command": "wizardCoder-vsc.toggleActivate",
         "title": "toggle wizardCoder activation"
+      },
+      {
+        "command": "wizardCoder-vsc.chat",
+        "title": "Chat with Wizard Coder"
       }
     ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "wizardCoder-vsc.chat",
+          "when": "editorTextFocus",
+          "group": "wizardCoder-vsc"
+        }
+      ]
+    },
     "configuration": {
       "title": "Wizard Coder",
       "properties": {
