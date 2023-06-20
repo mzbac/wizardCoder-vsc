@@ -1,7 +1,13 @@
 {
   "name": "wizardcoder-vsc",
   "displayName": "wizardcoder-vsc",
+  "publisher": "mzbac",
+  "icon": "images/logo.png",
   "description": "wizardcode extension",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mzbac/wizardCoder-vsc.git"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.79.0"
@@ -9,9 +15,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "*"
-  ],
+  "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
