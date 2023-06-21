@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		if (activated) {
 			const provider = new WizardCoderInlineCompletionItemProvider();
-			providerDisposable = vscode.languages.registerInlineCompletionItemProvider({ scheme: 'file', language: 'typescript' },
+			providerDisposable = vscode.languages.registerInlineCompletionItemProvider({ scheme: 'file', language: '*' },
 				provider);
 			context.subscriptions.push(providerDisposable);
 			statusBarItem.text = 'WizardCoder: ON'; // Change status bar text

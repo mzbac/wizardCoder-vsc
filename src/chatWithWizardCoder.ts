@@ -42,36 +42,41 @@ export const chatToWizardCoder = (
             type: "askQuestion",
             question: query,
         });
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+        try {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-        const apiEndpoint = vscode.workspace.getConfiguration('wizardCoder').get<string>('apiEndpoint') ?? '';
+            const apiEndpoint = vscode.workspace.getConfiguration('wizardCoder').get<string>('apiEndpoint') ?? '';
 
-        const response = await fetch(apiEndpoint, {
-            method: 'POST',
-            headers: { 'contentType': 'application/json' },
-            body: JSON.stringify({
-                prompt: `Below is an instruction that describes a task. Write a response that appropriately completes the request
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: { 'contentType': 'application/json' },
+                body: JSON.stringify({
+                    prompt: `Below is an instruction that describes a task. Write a response that appropriately completes the request
 ### Instruction: ${query}
 ### Response:`,
-                max_new_tokens: 1000,
-            }),
-        });
-        const json = await response.json() as ApiResponse;
-        const predictions = json.results;
-
-        hideStatusMessage();
-
-        if (predictions[0].text) {
-            await webViewProvider.sendMessageToWebView({
-                type: "addResponse",
-                value: predictions[0].text,
+                    max_new_tokens: 1000,
+                }),
             });
-        } else {
-            showTemporaryStatusMessage("Failed to call chatgpt!", 5000);
-            webViewProvider.sendMessageToWebView({
-                type: "addResponse",
-                value: "Failed to call chatgpt!",
-            });
+            const json = await response.json() as ApiResponse;
+            const predictions = json.results;
+            if (predictions[0].text) {
+                await webViewProvider.sendMessageToWebView({
+                    type: "addResponse",
+                    value: predictions[0].text,
+                });
+            } else {
+                showTemporaryStatusMessage("Failed to call chatgpt!", 5000);
+                webViewProvider.sendMessageToWebView({
+                    type: "addResponse",
+                    value: "Failed to call chatgpt!",
+                });
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            hideStatusMessage();
         }
+
+
     };
 };

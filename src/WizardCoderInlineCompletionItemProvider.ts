@@ -25,9 +25,22 @@ export class WizardCoderInlineCompletionItemProvider implements vscode.InlineCom
     private async fetchCompletionItems(document: vscode.TextDocument, position: vscode.Position): Promise<vscode.InlineCompletionItem[]> {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
-        const textAboveCursor = truncateText(document.getText(new vscode.Range(new vscode.Position(0, 0), position)));
+        // process context for the prompt
+        const contextWindow = 500;
+        let textAboveCursor = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
+        let wordsAbove = textAboveCursor.split(/\s+/);
+        if (wordsAbove.length > contextWindow) {
+            wordsAbove = wordsAbove.slice(wordsAbove.length - contextWindow);
+        }
+        textAboveCursor = wordsAbove.join(' ');
 
-        const textBelowCursor = truncateText(document.getText(new vscode.Range(position, new vscode.Position(document.lineCount, document.lineAt(document.lineCount - 1).range.end.character))));
+        let textBelowCursor = document.getText(new vscode.Range(position, new vscode.Position(document.lineCount, document.lineAt(document.lineCount - 1).range.end.character)));
+        let wordsBelow = textBelowCursor.split(/\s+/);
+        if (wordsBelow.length > contextWindow) {
+            wordsBelow = wordsBelow.slice(0, contextWindow);
+        }
+
+        textBelowCursor = wordsBelow.join(' ');
 
         const prompt = `<fim_prefix>${textAboveCursor}<fim_suffix>${textBelowCursor}<fim_middle>`;
 
@@ -40,7 +53,7 @@ export class WizardCoderInlineCompletionItemProvider implements vscode.InlineCom
             const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: { 'contentType': 'application/json' },
-                body: JSON.stringify({ prompt }),
+                body: JSON.stringify({ prompt, max_new_tokens: 100, }),
             });
 
             const json = await response.json() as ApiResponse;
@@ -62,10 +75,4 @@ export class WizardCoderInlineCompletionItemProvider implements vscode.InlineCom
 
         return completionItems;
     }
-}
-
-function truncateText(str: string): string {
-    const words = str.split(/\s+/);
-    const truncatedText = words.slice(Math.max(words.length - 500, 0)).join(' ');
-    return truncatedText;
 }
