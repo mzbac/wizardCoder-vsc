@@ -1,6 +1,7 @@
 # wizardcoder-vsc 
 a Visual Studio Code extension, developed as a proof of concept (POC) to demonstrate how AI-powered code auto-completion features like GitHub Copilot work.
 
+[![wizardCoder-vsc-demo](https://img.youtube.com/vi/zBRccicTI58/0.jpg)](https://www.youtube.com/watch?v=zBRccicTI58)
 
 ## To understand how WizardCoder works, you can refer to the main files:
 
